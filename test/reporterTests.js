@@ -7,7 +7,8 @@ const fetch = require('node-fetch')
 
 describe("Reporter Tests", function() {
 
-    const master = "0x88dF592F8eb5D7Bd38bFeF7dEb0fBc02cf3778a0"
+    const masterAddress = "0x88dF592F8eb5D7Bd38bFeF7dEb0fBc02cf3778a0"
+    const DEV_WALLET = "0x39E419bA25196794B595B2a595Ea8E527ddC9856"
     let accounts = null
     let tellor = null
     let cfac,ofac,tfac,gfac,devWallet
@@ -35,13 +36,13 @@ describe("Reporter Tests", function() {
       method: "hardhat_impersonateAccount",
       params: [DEV_WALLET]}
     )
-    master = await ethers.getContractAt("contracts/tellor3/ITellor.sol:ITellor", masterAddress)
+    master = await ethers.getContractAt("contracts/ITellor.sol:ITellor", masterAddress)
     rfac = await ethers.getContractFactory("contracts/Reporter.sol:Reporter");
     reporter = await rfac.deploy(masterAddress,ethers.utils.parseEther("1.0"));
     await reporter.deployed();
     await accounts[0].sendTransaction({to:DEV_WALLET,value:ethers.utils.parseEther("1.0")});
     devWallet = await ethers.provider.getSigner(DEV_WALLET);
-    master = await oldTellorInstance.connect(devWallet)
+    master = await master.connect(devWallet)
     await master.transfer(reporter.address,ethers.utils.parseEther("100.0"));
     });
     it("constructor()", async function() {
