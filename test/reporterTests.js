@@ -3,7 +3,8 @@ const { expect } = require("chai");
 const h = require("./helpers/helpers");
 var assert = require('assert');
 const web3 = require('web3');
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
+const { report } = require("process");
 
 describe("Reporter Tests", function() {
 
@@ -46,19 +47,63 @@ describe("Reporter Tests", function() {
     await master.transfer(reporter.address,ethers.utils.parseEther("100.0"));
     });
     it("constructor()", async function() {
+      assert(await reporter.tellor() == masterAddress, "Tellor address should be properly set")
+      let oracleAddy = await master.getAddressVars("0xfa522e460446113e8fd353d7fa015625a68bc0369712213a42e006346440891e")
+      assert(await reporter.oracle() == oracleAddy, "Oracle Address should be correct")
+      assert(await reporter.owner() == accounts[0].address, "owner should be correct")
+      assert(await report.profitThreshold() == ethers.utils.parseEther("1.0"), "profit threshold should be correct")
     });
     it("changeOwner()", async function() {
+      await reporter.changeOwner(accounts[1].address);
+      assert(await reporter.owner() == accounts[1].address, "new owner should be correct")
     });
     it("depositStake()", async function() {
+      await reporter.depositStake();
+      let vars = await master.getStakerInfo(reporter.address);
+      assert(vars[0] == 1, "staking status should be correct")
+      assert(vars[1] > 0 , "staking timestamp should be correct")
     });
     it("requestStakingWithdraw()", async function() {
+      await reporter.depositStake();
+      await reporter.requestStakingWithdraw();
+      let vars = await master.getStakerInfo(reporter.address);
+      assert(vars[0] == 2, "staking status should be correct")
+      assert(vars[1] > 0 , "staking timestamp should be correct")
     });
     it("submitValue()", async function() {
+      //stake second reporter
+      let reporter2 = await rfac.deploy(masterAddress,ethers.utils.parseEther("1.0"));
+      await reporter2.deployed();
+      await master.transfer(reporter2.address,ethers.utils.parseEther("100.0"));
+      await reporter2.depositStake()
+      await h.advanceTime(86400*7)
+      await reporter.submitValue(h.uintTob32(1),150,nonce,'0x');//clear inflationary rewards
+      //second reporter fails on submit
+      await h.expectThrow(reporter2.submitValue(h.uintTob32(1),150,nonce,'0x'))
+
     });
     it("submitValueBypass()", async function() {
+        //stake second reporter
+        let reporter2 = await rfac.deploy(masterAddress,ethers.utils.parseEther("1.0"));
+        await reporter2.deployed();
+        await master.transfer(reporter2.address,ethers.utils.parseEther("100.0"));
+        await reporter2.depositStake()
+        await h.advanceTime(86400*7)
+        await reporter.submitValue(h.uintTob32(1),150,nonce,'0x');//clear inflationary rewards
+        //second reporter fails on submit
+        await reporter2.submitValueByPass(h.uintTob32(1),150,nonce,'0x');
     });
     it("transfer()", async function() {
+      await reporter.transfer(accounts[0].address, 200);
+      assert(await master.balanceOf(accounts[0].address) == 200, "transfer should be successful")
     });
     it("withdrawStake()", async function() {
+        await reporter.depositStake();
+        await reporter.requestStakingWithdraw();
+        await h.advanceTime(86400*7)
+        await reporter.withdrawStake();
+        let vars = await master.getStakerInfo(reporter.address);
+        assert(vars[0] == 0, "staking status should be correct")
+        assert(vars[1] > 0 , "staking timestamp should be correct")
     });
 });
