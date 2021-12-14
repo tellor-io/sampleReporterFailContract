@@ -2,6 +2,7 @@
 pragma solidity 0.8.3;
 
 import "./ITellor.sol";
+import "hardhat/console.sol";
 
 contract Reporter {
     ITellor public tellor;
@@ -32,12 +33,14 @@ contract Reporter {
         tellor.requestStakingWithdraw();
     }
 
-    function submitValue(bytes32 _queryId, bytes calldata _value, uint256 _nonce, bytes memory _queryData) external{
-        require(oracle.getTimeBasedReward() > profitThreshold, "profit threshold not met");
+    function submitValue(bytes32 _queryId, bytes memory _value, uint256 _nonce, bytes memory _queryData) external{
+        uint256 _reward;
+        (,_reward) = oracle.getCurrentReward(_queryId);
+        require(_reward > profitThreshold, "profit threshold not met");
         oracle.submitValue(_queryId,_value,_nonce,_queryData);
     }
 
-    function submitValueBypass(bytes32 _queryId, bytes calldata _value, uint256 _nonce, bytes memory _queryData) external{
+    function submitValueBypass(bytes32 _queryId, bytes memory _value, uint256 _nonce, bytes memory _queryData) external{
         oracle.submitValue(_queryId,_value,_nonce,_queryData);
     }
 
