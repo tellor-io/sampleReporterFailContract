@@ -6,13 +6,13 @@ A sample contract to add features to your reporter, namely the ability to fail i
 
 ## Directions for actual usage
 
-#### Deploy Contract to Desired Network (e.g. Mainnet)
+* Deploy Contract to Desired Network (e.g. Mainnet)
 
-#### Send stake amount to contract (e.g. 100 TRB)
+* Send stake amount to contract (e.g. 100 TRB)
 
-#### run depositStake()
+* run depositStake()
 
-#### Instead of submitValue() to the oracle address, call this reporter contract and it will check the desired require statment before submitting.
+* Instead of submitValue() to the oracle address, call this reporter contract and it will check the desired require statment before submitting.
 
 ## Setting up and testing
 
