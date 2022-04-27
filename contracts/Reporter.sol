@@ -45,6 +45,7 @@ contract Reporter {
     }
 
     function transfer(address _to, uint256 _amount) external{
+        require(msg.sender == owner, "Transfer not initiated by owner");
         tellor.transfer(_to,_amount);
     }
 

@@ -113,6 +113,10 @@ describe("Reporter Tests", function() {
       await reporter.transfer(accounts[0].address, 200);
       assert(await master.balanceOf(accounts[0].address) == 200, "transfer should be successful")
     });
+    it("transfer() fail if msg.sender is not owner", async function() {
+      h.expectThrow(reporter.connect(accounts[5]).transfer(accounts[5].address, 200));
+      assert(await master.balanceOf(accounts[5].address) == 0, "transfer was not successful")
+    });
     it("withdrawStake()", async function() {
         await reporter.depositStake();
         await reporter.requestStakingWithdraw();
