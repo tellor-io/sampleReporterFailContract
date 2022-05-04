@@ -59,6 +59,10 @@ describe("Reporter Tests", function() {
       await reporter.changeOwner(accounts[1].address);
       assert(await reporter.owner() == accounts[1].address, "new owner should be correct")
     });
+    it("changeOwner() fail if msg.sender is not owner", async function() {
+      h.expectThrow(reporter.connect(accounts[5]).changeOwner(accounts[1].address));
+      assert(await reporter.owner() == accounts[0].address, "new owner was changed")
+     });
     it("depositStake()", async function() {
       await reporter.depositStake();
       let vars = await master.getStakerInfo(reporter.address);
@@ -72,6 +76,15 @@ describe("Reporter Tests", function() {
       assert(vars[0] == 2, "staking status should be correct")
       assert(vars[1] > 0 , "staking timestamp should be correct")
     });
+    it("requestStakingWithdraw() fail if msg.sender is not owner", async function() {
+      await reporter.depositStake();
+      let vars = await master.getStakerInfo(reporter.address);
+      assert(await vars[0] == 1, "account 0 was staked")
+      h.expectThrow(reporter.connect(accounts[5]).requestStakingWithdraw());
+      let vars1 = await master.getStakerInfo(reporter.address);
+      assert(await vars1[0] == 1, "account 0 was unstaked")
+    });
+
     it("submitValue()", async function() {
       await reporter.depositStake();
       //stake second reporter

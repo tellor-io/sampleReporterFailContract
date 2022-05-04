@@ -37,8 +37,8 @@
       ]
     },
     "/Users/brendaloya/Documents/Tellor/1Tellor/tellor/projects/sampleReporterFailContract/contracts/Reporter.sol": {
-      "lastModificationDate": 1650987037377,
-      "contentHash": "a8dcc152751b151ca875aad218e8d241",
+      "lastModificationDate": 1651682558607,
+      "contentHash": "ece973c7eeb15d5f3d4c73b57c323354",
       "sourceName": "contracts/Reporter.sol",
       "solcConfig": {
         "version": "0.8.3",
