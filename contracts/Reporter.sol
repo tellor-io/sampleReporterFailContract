@@ -20,8 +20,13 @@ contract Reporter {
         owner = msg.sender;
         profitThreshold = _profitThreshold;
     }
+
+        modifier onlyOwner {
+        require(msg.sender == owner, "Only owner can call this function.");
+        _;
+    }
     
-    function changeOwner(address _newOwner) external{
+    function changeOwner(address _newOwner) external onlyOwner {
         owner = _newOwner;
     }
 
@@ -29,7 +34,7 @@ contract Reporter {
         tellor.depositStake();
     }
 
-    function requestStakingWithdraw() external{
+    function requestStakingWithdraw() external onlyOwner {
         tellor.requestStakingWithdraw();
     }
 
@@ -44,8 +49,7 @@ contract Reporter {
         oracle.submitValue(_queryId,_value,_nonce,_queryData);
     }
 
-    function transfer(address _to, uint256 _amount) external{
-        require(msg.sender == owner, "Transfer not initiated by owner");
+    function transfer(address _to, uint256 _amount) external onlyOwner{
         tellor.transfer(_to,_amount);
     }
 
