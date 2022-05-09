@@ -30,7 +30,7 @@ contract Reporter {
         owner = _newOwner;
     }
 
-    function depositStake() external{
+    function depositStake() onlyOwner external{
         tellor.depositStake();
     }
 
@@ -38,14 +38,14 @@ contract Reporter {
         tellor.requestStakingWithdraw();
     }
 
-    function submitValue(bytes32 _queryId, bytes memory _value, uint256 _nonce, bytes memory _queryData) external{
+    function submitValue(bytes32 _queryId, bytes memory _value, uint256 _nonce, bytes memory _queryData) onlyOwner external{
         uint256 _reward;
         (,_reward) = oracle.getCurrentReward(_queryId);
         require(_reward > profitThreshold, "profit threshold not met");
         oracle.submitValue(_queryId,_value,_nonce,_queryData);
     }
 
-    function submitValueBypass(bytes32 _queryId, bytes memory _value, uint256 _nonce, bytes memory _queryData) external{
+    function submitValueBypass(bytes32 _queryId, bytes memory _value, uint256 _nonce, bytes memory _queryData) onlyOwner external{
         oracle.submitValue(_queryId,_value,_nonce,_queryData);
     }
 
@@ -53,7 +53,7 @@ contract Reporter {
         tellor.transfer(_to,_amount);
     }
 
-    function withdrawStake() external{
+    function withdrawStake() onlyOwner external{
         tellor.withdrawStake();
     }
 }
