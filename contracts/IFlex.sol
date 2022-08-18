@@ -14,5 +14,6 @@ interface IFlex {
     function getCurrentTip(bytes32 _queryId) external view returns (uint256);
     function submitValue(bytes32 _queryId, bytes calldata _value, uint256 _nonce, bytes memory _queryData) external;
     function withdrawStake() external;
+    function tip(bytes32 _queryId, uint256 _amount, bytes calldata _queryData) external;
     
 }
