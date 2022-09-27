@@ -1,7 +1,8 @@
-node_modules
-cache
+node_modules/
+cache/
 artifacts/
 .env
 slither
 coverage/
 coverage.json
+package-lock.json
